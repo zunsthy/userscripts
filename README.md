@@ -1,6 +1,11 @@
 # UserScripts
+
+Some GM-Userscripts for self.
+
 ## Intro
+
 It's nothing.
 
 ## License
-ISC
+
+MPL 2.0
