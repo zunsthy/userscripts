@@ -2,7 +2,7 @@
 // @id          zunsthy-mobile-view-cartoon-cartoonmad
 // @name        Mobile View Cartoon (cartoonmad)
 // @category    utils
-// @version     1.0.0
+// @version     1.0.1
 // @namespace   https://github.com/zunsthy/
 // @updateURL   https://raw.githubusercontent.com/zunsthy/userscripts/master/MobileViewCartoonCartoonmad.meta.js
 // @downloadURL https://raw.githubusercontent.com/zunsthy/userscripts/master/MobileViewCartoonCartoonmad.user.js
