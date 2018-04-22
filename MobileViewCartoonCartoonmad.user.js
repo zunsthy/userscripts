@@ -1,8 +1,9 @@
 // ==UserScript==
 // @id          zunsthy-mobile-view-cartoon-cartoonmad
 // @name        Mobile View Cartoon (cartoonmad)
+// @icon        http://www.cartoonmad.com/favicon.ico
 // @category    utils
-// @version     1.0.1
+// @version     1.0.2
 // @namespace   https://github.com/zunsthy/
 // @updateURL   https://raw.githubusercontent.com/zunsthy/userscripts/master/MobileViewCartoonCartoonmad.meta.js
 // @downloadURL https://raw.githubusercontent.com/zunsthy/userscripts/master/MobileViewCartoonCartoonmad.user.js
@@ -17,13 +18,29 @@
   const body = document.body;
   const head = document.head;
 
+  const foreach = (arr, func) => Array.prototype.forEach.call(arr, func);
+
   const append = (el, node) => (
     (node instanceof Node)
     ? el.appendChild(node)
     : (node && node.length)
-    ? Array.prototype.forEach.call(node, n => append(el, n))
+    ? foreach(node, n => append(el, n))
     : null
   );
+
+  const insertCss = (css) => {
+    const style = document.createElement('style');
+    style.type = 'text/css';
+    head.appendChild(style);
+    style.textContent = css;
+  };
+
+  const clearNode = (node, depth = 1) => {
+    while (depth && node.firstChild) {
+      clearNode(node, depth - 1);
+      node.removeChild(node.firstChild);
+    }
+  };
 
   const processCommonPage = () => {
     // series page
@@ -32,7 +49,7 @@
 
     const pages = document.querySelector('a.onpage').parentNode.querySelectorAll('a');
     const nav = document.querySelectorAll('td[width="150"] > a.pages');
-    const title = document.querySelector('td[width="600"] > center > li').childNodes;
+    const title = document.querySelector('td[width="600"] > center > li').querySelectorAll('a,select');
 
     const nextId = +id + 1;
     const content = document.querySelector(`a[href="thend.asp"],a[href="${nextId}.html"]`);
@@ -64,24 +81,17 @@
     link.href = content.href;
     const pic = document.createElement('img');
     pic.src = img.src;
+    pic.id = 'cartoon';
     link.appendChild(pic);
     main.appendChild(link);
 
     const frag = document.createDocumentFragment();
     append(frag, [navbar, header, footer.cloneNode(true), main, footer]);
 
-    link.style.display = 'block';
+    link.style.display = 'inline-block';
     pic.style.maxWidth = '100%';
-    navbar.style.marginBottom = '10px';
-    header.style.marginBottom = '10px';
-    footer.style.marginBottom = '10px';
-    main.style.marginTop = '10px';
-    main.style.marginBottom = '10px';
 
-    body.removeChild(body.firstChild);
-    body.removeChild(body.firstChild);
-    body.removeChild(body.firstChild);
-    body.appendChild(frag);
+    return frag;
   };
 
   const processEndPage = () => {
@@ -90,22 +100,37 @@
     const nav = homeLink.parentNode.querySelectorAll('a');
     
     const navbar = document.createElement('nav');
+    navbar.classList.add('last-page')
     append(navbar, nav);
-    console.log(navbar);
 
     const frag = document.createDocumentFragment();
     append(frag, [navbar]);
 
-    body.removeChild(body.firstChild);
-    body.removeChild(body.firstChild);
-    body.removeChild(body.firstChild);
-    body.removeChild(body.firstChild);
-    body.removeChild(body.firstChild);
-
-    body.appendChild(frag);
+    return frag;
   };
 
-  if (/thend\.asp/.test(window.location.href)) processEndPage();
+  let newPage = null;
+
+  if (/thend\.asp/.test(window.location.href)) newPage = processEndPage();
   else if (!/\d{4}\d\d+/.test(window.location.href)) return;
-  else processCommonPage();
+  else newPage = processCommonPage();
+
+  const newStyle = `
+  nav, header, footer, main { margin: 10px 0; }
+  nav, header { text-align: center; }
+  nav.last-page > a { display: block; font-size: 18px; text-align: center; }
+  nav.last-page > a:hover { font-size: 18px; }
+  footer { width: 100%; white-space: nowrap; overflow: scroll; }
+  footer .pages, footer .onpage { display: inline; border: 0 none; font-size: 14px; line-height: 1.4; }
+  footer .pages:hover { display: inline; border: 0 none; font-size: 14px; line-height: 1.4; }
+  `;
+
+  insertCss(newStyle);
+  clearNode(body);
+  body.appendChild(newPage);
+
+  const cartoon = document.getElementById('cartoon');
+  if (cartoon) {
+    cartoon.scrollIntoView(true);
+  }
 })();
