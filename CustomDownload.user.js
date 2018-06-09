@@ -18,8 +18,19 @@
 ((mimes) => {
   const UTF8_BOM = new Uint8Array([0xEF, 0xBB, 0xBF]);
 
+  const downloadDataUrl = (filename, url, method) => {
+    if (method === 'window') {
+      window.open(url);
+    } else {
+      const a = document.createElement('a');
+      a.download = name;
+      a.href = url;
+      a.dispatchEvent(new MouseEvent('click'));
+    }
+  };
+  
   const write = (content, { ext = '', bom = false }) => {
-    const mime = mimes[(ext || '').slice(1)] || mimes.bin;
+    const mime = mimes[ext] || mimes.bin;
     const blob = new Blob([bom ? UTF8_BOM : '', content], { type: mime });
     return URL.createObjectURL(blob);
   };
@@ -31,20 +42,15 @@
     const uri = write(content, Object.assign({ ext }, opts));
     const name = dot === -1 ? filename + '.' + ext : filename;
 
-    if (opts.method === 'window') {
-      window.open(uri);
-    } else {
-      const a = document.createElement('a');
-      a.download = name;
-      a.href = uri;
-      a.dispatchEvent(new MouseEvent('click'));
-    }
+    downloadDataUrl(name, uri, opts.method);
+    
     URL.revokeObjectURL(uri);
   };
 
   window._DL = {
     write,
     writeFile,
+    download: downloadDataUrl,
     mimes,
   };
 })({
