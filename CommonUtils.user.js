@@ -2,7 +2,7 @@
 // @id          zunsthy-common-utils
 // @name        Common Utils
 // @category    utils
-// @version     0.0.1
+// @version     0.0.2
 // @updateURL   https://raw.githubusercontent.com/zunsthy/userscripts/master/CommonUtils.meta.js
 // @downloadURL https://raw.githubusercontent.com/zunsthy/userscripts/master/CommonUtils.user.js
 // @author      ZunSThy <zunsthy@gmail.com>
@@ -46,10 +46,17 @@
   utils.seq = n => Array.apply(null, { length: n }).map(Function.call, Number);
   const flatten = arr => (Array.isArray(arr) ? Array.prototype.concat([], arr.map(flatten)) : arr);
 
-  const compare = (a, b) => (a - b);
-  const max = (arr, cmp = compare) => arr.reduce((m, a) => (cmp(m, a) > 0 ? m : a, arr[0]));
+  const comparator = (a, b) => {
+    if (typeof a === 'number' && typeof b === 'number') {
+      return a - b;
+    } else {
+      return String.prototype.localeCompare.call(`${a}`, `${b}`);
+    }
+  };
+  const max = (arr, cmp = comparator) => arr.reduce((m, a) => (cmp(m, a) > 0 ? m : a), arr[0]);
   utils.max = max;
-  utils.min = (arr, cmp = compare) => arr.reduce((m, a) => (cmp(m, a) < 0 ? m : a, arr[0]));
+  const min = (arr, cmp = comparator) => arr.reduce((m, a) => (cmp(m, a) < 0 ? m : a), arr[0]);
+  utils.min = min;
 
   utils.blobToText = (blob, cb) => {
     const reader = new FileReader();
