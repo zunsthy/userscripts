@@ -3,20 +3,27 @@
 // @name        Mobile View Cartoon (cartoonmad)
 // @icon        http://www.cartoonmad.com/favicon.ico
 // @category    utils
-// @version     1.0.3
+// @version     1.0.4
 // @namespace   https://github.com/zunsthy/
 // @updateURL   https://raw.githubusercontent.com/zunsthy/userscripts/master/MobileViewCartoonCartoonmad.meta.js
 // @downloadURL https://raw.githubusercontent.com/zunsthy/userscripts/master/MobileViewCartoonCartoonmad.user.js
 // @description Add a custom style for detail page
 // @author      ZunSThy <zunsthy@gmail.com>
 // @include     http://www.cartoonmad.com/comic/*
+// @include     https://www.cartoonmad.com/comic/*
 // @match       http://www.cartoonmad.com/comic/*
+// @match       https://www.cartoonmad.com/comic/*
 // @grant       none
 // ==/UserScript==
 
 (() => {
   const body = document.body;
   const head = document.head;
+
+  const viewport = document.createElement('meta');
+  viewport.name = 'viewport';
+  viewport.content = 'width=device-width';
+  head.appendChild(viewport);
 
   const foreach = (arr, func) => Array.prototype.forEach.call(arr, func);
 
@@ -54,11 +61,6 @@
     const nextId = +id + 1;
     const content = document.querySelector(`a[href="thend.asp"],a[href="${nextId}.html"]`);
     const img = content.querySelector('img');
-
-    const viewport = document.createElement('meta');
-    viewport.name = 'viewport';
-    viewport.content = 'width=device-width';
-    head.appendChild(viewport);
 
     if (content.href !== 'thend.asp') {
       const next = document.createElement('link');
@@ -98,7 +100,7 @@
     const homeLinks = document.querySelectorAll('a[href="http://www.cartoonmad.com/"]');
     const homeLink = homeLinks[homeLinks.length - 1];
     const nav = homeLink.parentNode.querySelectorAll('a');
-    
+
     const navbar = document.createElement('nav');
     navbar.classList.add('last-page')
     append(navbar, nav);
@@ -117,8 +119,8 @@
 
   const newStyle = `
   nav, header, footer, main { margin: 10px 0; }
-  nav, header { text-align: center; }
-  nav.last-page > a { display: block; font-size: 18px; text-align: center; }
+  nav > .pages { border: 0 none; padding: 5px; font-size: 14px; }
+  nav.last-page > a { display: block; padding: 10px; font-size: 18px; text-align: center; }
   nav.last-page > a:hover { font-size: 18px; }
   footer { width: 100%; white-space: nowrap; overflow: scroll; }
   footer .pages, footer .onpage { display: inline; border: 0 none; font-size: 14px; line-height: 1.4; }

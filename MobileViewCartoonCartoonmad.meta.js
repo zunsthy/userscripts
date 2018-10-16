@@ -3,7 +3,7 @@
 // @name        Mobile View Cartoon (cartoonmad)
 // @icon        http://www.cartoonmad.com/favicon.ico
 // @category    utils
-// @version     1.0.3
+// @version     1.0.4
 // @namespace   https://github.com/zunsthy/
 // @updateURL   https://raw.githubusercontent.com/zunsthy/userscripts/master/MobileViewCartoonCartoonmad.meta.js
 // @downloadURL https://raw.githubusercontent.com/zunsthy/userscripts/master/MobileViewCartoonCartoonmad.user.js
