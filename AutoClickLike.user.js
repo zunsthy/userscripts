@@ -3,7 +3,7 @@
 // @name        Auto Click Like (user.qzone.qq.com)
 // @icon        https://user.qzone.qq.com/favicon.ico
 // @category    utils
-// @version     1.0.0
+// @version     1.0.1
 // @updateURL   https://raw.githubusercontent.com/zunsthy/userscripts/master/AutoClickLike.meta.js
 // @downloadURL https://raw.githubusercontent.com/zunsthy/userscripts/master/AutoClickLike.user.js
 // @author      ZunSThy <zunsthy@gmail.com>
@@ -34,7 +34,7 @@ setTimeout(() => {
   };
   const autoLike = () => {
     const icon = unlikes.shift();
-    if (icon) icon.click();
+    if (icon && icon.parentNode && !icon.parentNode.classList.contains('.item-on')) icon.click();
   };
 
   createInterval(collectUnlike, 8e3, 200);
