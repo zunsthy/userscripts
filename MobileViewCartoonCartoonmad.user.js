@@ -3,16 +3,18 @@
 // @name        Mobile View Cartoon (cartoonmad)
 // @icon        http://www.cartoonmad.com/favicon.ico
 // @category    utils
-// @version     1.0.4
+// @version     1.0.5
 // @namespace   https://github.com/zunsthy/
 // @updateURL   https://raw.githubusercontent.com/zunsthy/userscripts/master/MobileViewCartoonCartoonmad.meta.js
 // @downloadURL https://raw.githubusercontent.com/zunsthy/userscripts/master/MobileViewCartoonCartoonmad.user.js
 // @description Add a custom style for detail page
 // @author      ZunSThy <zunsthy@gmail.com>
-// @include     http://www.cartoonmad.com/comic/*
-// @include     https://www.cartoonmad.com/comic/*
+// @include     https?://www.cartoonmad.com/comic/*
+// @include     https?://www.cartoonmad.*/comic/*
 // @match       http://www.cartoonmad.com/comic/*
 // @match       https://www.cartoonmad.com/comic/*
+// @match       http://www.cartoonmad.6cc.us/comic/*
+// @match       https://www.cartoonmad.6cc.us/comic/*
 // @grant       none
 // ==/UserScript==
 
@@ -59,10 +61,11 @@
     const title = document.querySelector('td[width="600"] > center > li').querySelectorAll('a,select');
 
     const nextId = +id + 1;
-    const content = document.querySelector(`a[href="thend.asp"],a[href="${nextId}.html"]`);
-    const img = content.querySelector('img');
+    const content = document.querySelector(`a[href="${nextId}.html"]`);
+    const contentLast = document.querySelector('a[href*="thend.asp?"]');
+    const img = (content || contentLast).querySelector('img');
 
-    if (content.href !== 'thend.asp') {
+    if (content) {
       const next = document.createElement('link');
       next.rel = 'next';
       next.href = content.href;
@@ -80,7 +83,8 @@
 
     const main = document.createElement('main');
     const link = document.createElement('a');
-    link.href = content.href;
+    link.href = (content || contentLast).href;
+
     const pic = document.createElement('img');
     pic.src = img.src;
     pic.id = 'cartoon';
@@ -97,9 +101,9 @@
   };
 
   const processEndPage = () => {
-    const homeLinks = document.querySelectorAll('a[href="http://www.cartoonmad.com/"]');
-    const homeLink = homeLinks[homeLinks.length - 1];
-    const nav = homeLink.parentNode.querySelectorAll('a');
+    const navLinks = document.querySelectorAll('a[href^="http://www.cartoonmad.com/comic/"],a[href^="https://www.cartoonmad.com/comic/"]');
+    const navLink = navLinks[0];
+    const nav = navLink.parentNode.querySelectorAll('a');
 
     const navbar = document.createElement('nav');
     navbar.classList.add('last-page')
