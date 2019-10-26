@@ -3,7 +3,7 @@
 // @name        Mobile View Cartoon (cartoonmad)
 // @icon        http://www.cartoonmad.com/favicon.ico
 // @category    utils
-// @version     1.0.5
+// @version     1.0.6
 // @namespace   https://github.com/zunsthy/
 // @updateURL   https://raw.githubusercontent.com/zunsthy/userscripts/master/MobileViewCartoonCartoonmad.meta.js
 // @downloadURL https://raw.githubusercontent.com/zunsthy/userscripts/master/MobileViewCartoonCartoonmad.user.js
@@ -60,7 +60,7 @@
     const nav = document.querySelectorAll('td[width="150"] > a.pages');
     const title = document.querySelector('td[width="600"] > center > li').querySelectorAll('a,select');
 
-    const nextId = +id + 1;
+    const nextId = (BigInt(id) + 1n).toString();
     const content = document.querySelector(`a[href="${nextId}.html"]`);
     const contentLast = document.querySelector('a[href*="thend.asp?"]');
     const img = (content || contentLast).querySelector('img');
