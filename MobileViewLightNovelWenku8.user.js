@@ -3,7 +3,7 @@
 // @name        Mobile View Novel (wenku8)
 // @category    utils
 // @icon        http://www.wenku8.net/favicon.ico
-// @version     1.0.0
+// @version     1.0.1
 // @updateURL   https://raw.githubusercontent.com/zunsthy/userscripts/master/MobileViewLightNovelWenku8.meta.js
 // @downloadURL https://raw.githubusercontent.com/zunsthy/userscripts/master/MobileViewLightNovelWenku8.user.js
 // @author      ZunSThy <zunsthy@gmail.com>
@@ -16,7 +16,27 @@
 // @grant       none
 // ==/UserScript==
 
+function loadSet() {
+  var bcolor = ReadCookies("bcolor");
+  if (bcolor) document.bgColor = bcolor;
+
+  var fonttype = ReadCookies("fonttype");
+  var txtcolor = ReadCookies("txtcolor");
+  var contentobj = document.getElementById('content');
+if (fonttype) contentobj.style.fontSize = bcolor;
+if (txtcolor) contentobj.style.color = txtcolor;
+
+  // var speed = ReadCookies("scrollspeed") || '5';
+  // scrollspeed.value=tmpstr;
+// setSpeed();
+}
+
 (() => {
+  const viewport = document.createElement('meta');
+  viewport.name = 'viewport';
+  viewport.content = 'width=device-width';
+  document.head.appendChild(viewport);
+
   const insertCss = (css) => {
     const style = document.createElement('style');
     style.type = 'text/css';
@@ -25,14 +45,17 @@
   };
 
   const removeEl = (el) => {
-console.log(el);
     el.parentNode.removeChild(el);
   };
 
   const cssPatch = `
 body { font-family: sans-serif; }
 #adv1, #adv5 { display: none; }
-#footlink { font-size: 2rem; }
+#adtop, #footlink { font-size: 1.5rem; }
+#adtop { width: 100% }
+#headlink { min-width: unset; }
+intput, select { font-size: 100%; }
+br { font-size: 0.25em; }
   `;
 
   insertCss(cssPatch);
@@ -56,18 +79,20 @@ body { font-family: sans-serif; }
   fontColorSelect.appendChild(moreFontColorOption);
 
   const moreFontSizeOption1 = document.createElement('option');
-  moreFontSizeOption1.value = '32px'
-  moreFontSizeOption1.textContent = '32px';
+  moreFontSizeOption1.value = '1.5em';
+  moreFontSizeOption1.textContent = '1.5em';
   fontSizeSelect.appendChild(moreFontSizeOption1);
 
   const moreFontSizeOption2 = document.createElement('option');
-  moreFontSizeOption2.value = '40px';
-  moreFontSizeOption2.textContent = '40px';
+  moreFontSizeOption2.value = '2em';
+  moreFontSizeOption2.textContent = '2em';
   fontSizeSelect.appendChild(moreFontSizeOption2);
 
   setTimeout(() => {
     document.querySelectorAll('[id^="adv"]').forEach(removeEl);
     document.querySelectorAll('.adsbygoogle').forEach(removeEl);
     document.querySelectorAll('iframe').forEach(removeEl);
+
+    loadSet();
   });
 })();

@@ -3,7 +3,7 @@
 // @name        Mobile View Novel (wenku8)
 // @category    utils
 // @icon        http://www.wenku8.net/favicon.ico
-// @version     1.0.0
+// @version     1.0.1
 // @updateURL   https://raw.githubusercontent.com/zunsthy/userscripts/master/MobileViewLightNovelWenku8.meta.js
 // @downloadURL https://raw.githubusercontent.com/zunsthy/userscripts/master/MobileViewLightNovelWenku8.user.js
 // @author      ZunSThy <zunsthy@gmail.com>
