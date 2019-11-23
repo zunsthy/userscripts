@@ -3,14 +3,14 @@
 // @name        Market Value Analysis (xinfadi)
 // @icon        http://www.xinfadi.com.cn/favicon.ico
 // @category    utils
-// @version     0.1.0
+// @version     0.1.1
 // @namespace   https://github.com/zunsthy/
 // @updateURL   https://raw.githubusercontent.com/zunsthy/userscripts/master/MarketPriceAnalysisXFD.meta.js
 // @downloadURL https://raw.githubusercontent.com/zunsthy/userscripts/master/MarketPriceAnalysisXFD.user.js
 // @description fetch data and draw trending chart
 // @author      ZunSThy <zunsthy@gmail.com>
-// @include     http://www.xinfadi.com.cn/marketanalysis/*
-// @match       http://www.xinfadi.com.cn/marketanalysis/*
+// @include     http://www.xinfadi.com.cn/marketanalysis/0/list/*
+// @match       http://www.xinfadi.com.cn/marketanalysis/0/list/*
 // @grant       none
 // ==/UserScript==
 
@@ -178,6 +178,7 @@
         log('entry exists', key.join(','), entry)
       }
     }
+    return range
   }
 
   const pageDateRangeResultCache = {}
@@ -319,7 +320,6 @@
       + ' '.repeat(width - xLabel0.length - xLabelN.length)
       + xLabelN
 
-
     const yAxisStyle = yAxis.style || '│'
     const yAxisLineRows = []
     for(let i = 0; i < height; i++) yAxisLineRows.push(yAxisStyle)
@@ -399,7 +399,7 @@
     if (type === 'old') {
       const datestr = await findExistDate('min')
       const date = parseDate(datestr)
-      // date.setTime(date.getTime() - 86400e3)
+      // date.setTime(date.getTime() - TIME_IN_DAY)
       stt = await findDatePage(date)
       end = Math.min(stt + safePage, total)
     } else {
@@ -408,11 +408,21 @@
       end = await findDatePage(date)
       stt = Math.max(end - safePage, 1)
     }
-    await saveRange({ stt, end })
-    return { stt, end }
+    return await saveRange({ stt, end })
   }
 
   window.updateData = updateData
+
+  const manualFetchData = async ({ stt, end }) => {
+    const dstt = parseDate(stt)
+    dstt.setTime(dstt.getTime() - TIME_IN_DAY)
+    const pstt = await findDatePage(dstt)
+    const dend = parseDate(end)
+    const pend = await findDatePage(dend)
+    return await saveRange({ stt: pend, end: pstt })
+  }
+
+  window.manualFetchData = manualFetchData
 
   const allEntryByNameInDateRange = async (name, { stt, end }) => {
     const nameRange = IDBKeyRange.only([name])
