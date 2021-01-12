@@ -2,7 +2,7 @@
 // @id          zunsthy-common-utils
 // @name        Common Utils
 // @category    utils
-// @version     0.0.2
+// @version     0.0.3
 // @updateURL   https://raw.githubusercontent.com/zunsthy/userscripts/master/CommonUtils.meta.js
 // @downloadURL https://raw.githubusercontent.com/zunsthy/userscripts/master/CommonUtils.user.js
 // @author      ZunSThy <zunsthy@gmail.com>
@@ -178,4 +178,62 @@
   const formatTime = (date = new Date()) => `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
   utils.formatTime = formatTime;
   utils.formatDateTime = (date = new Date()) => formatDate(date) + ' ' + foramtTime(date);
+
+  const tBase64StringToUint8Array = (b64str) => {
+    const b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+    const arr = [];
+    const buf = [];
+    for (let i = 0; i < b64str.length; i++) {
+      const c = b64str.charAt(i);
+      const idx = b.indexOf(c);
+      if (idx === -1) continue;
+      arr.push(idx);
+    }
+    for (let i = 0; i < arr.length; i+=4) {
+      const n1 = arr[i];
+      const n2 = arr[i+1];
+      const n3 = arr[i+2] || 0;
+      const n4 = arr[i+3] || 0;
+      const c1 = ((n1      ) << 2) | (n2 >> 4);
+      const c2 = ((n2 & 0xf) << 4) | (n3 >> 2);
+      const c3 = ((n3 & 0x3) << 6) | (n4     );
+      buf.push(c1);
+      if (n3 !== 64) buf.push(c2);
+      if (n4 !== 64) buf.push(c3);
+    }
+    return new Uint8Array(buf);
+  };
+
+  const tUint8ArrayToString = (buf) => {
+    const arr = [];
+    for (let i = 0; i < buf.length; i++) {
+      const c = buf[i];
+      const h = c >> 4; // hhhh llll
+      if (h < 0x08) {        // 0xxx
+        arr.push(String.fromCharCode(c));
+      } else if (h < 0x0c) { // 10xx
+      } else if (h < 0x0e) { // 110x
+        const c2 = buf[++i];
+        arr.push(String.fromCodePoint(
+            ((c  & 0x1f) << 6)
+          | ((c2 & 0x3f)     )
+        ));
+      } else if (h < 0x0f) { // 1110
+        const c2 = buf[++i];
+        const c3 = buf[++i];
+        arr.push(String.fromCodePoint(
+            ((c  & 0x0f) << 12)
+          | ((c2 & 0x3f) << 6)
+          | ((c3 & 0x3f)     )
+        ));
+      } else {  // 1111
+        console.error(`wrong char code at ${i}: ${n}`);
+      }
+    }
+    return arr.join('');
+  };
+
+  utils.tBase64StringToUint8Array = tBase64StringToUint8Array;
+  utils.tUint8ArrayToString = tUint8ArrayToString;
+  utils.tBase64StringToUtf8String = s => tUint8ArrayToString(tUint8ArrayToString(s));
 })();
