@@ -2,7 +2,7 @@
 // @id          zunsthy-common-utils
 // @name        Common Utils
 // @category    utils
-// @version     0.0.3
+// @version     0.0.4
 // @updateURL   https://raw.githubusercontent.com/zunsthy/userscripts/master/CommonUtils.meta.js
 // @downloadURL https://raw.githubusercontent.com/zunsthy/userscripts/master/CommonUtils.user.js
 // @author      ZunSThy <zunsthy@gmail.com>
@@ -179,61 +179,93 @@
   utils.formatTime = formatTime;
   utils.formatDateTime = (date = new Date()) => formatDate(date) + ' ' + foramtTime(date);
 
-  const tBase64StringToUint8Array = (b64str) => {
-    const b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-    const arr = [];
-    const buf = [];
-    for (let i = 0; i < b64str.length; i++) {
-      const c = b64str.charAt(i);
-      const idx = b.indexOf(c);
-      if (idx === -1) continue;
-      arr.push(idx);
-    }
-    for (let i = 0; i < arr.length; i+=4) {
-      const n1 = arr[i];
-      const n2 = arr[i+1];
-      const n3 = arr[i+2] || 0;
-      const n4 = arr[i+3] || 0;
-      const c1 = ((n1      ) << 2) | (n2 >> 4);
-      const c2 = ((n2 & 0xf) << 4) | (n3 >> 2);
-      const c3 = ((n3 & 0x3) << 6) | (n4     );
-      buf.push(c1);
-      if (n3 !== 64) buf.push(c2);
-      if (n4 !== 64) buf.push(c3);
-    }
-    return new Uint8Array(buf);
-  };
+const tBase64StringToUint8Array = (b64str) => {
+const b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+const arr = [];
+const buf = [];
+for (let i = 0; i < b64str.length; i++) {
+  const c = b64str.charAt(i);
+  const idx = b.indexOf(c);
+  if (idx === -1) continue;
+  arr.push(idx);
+}
+for (let i = 0; i < arr.length; i+=4) {
+  const n1 = arr[i];
+  const n2 = arr[i+1];
+  const n3 = arr[i+2] || 0;
+  const n4 = arr[i+3] || 0;
+  // aaaaaabb bbbbcccc ccdddddd
+  const c1 = ((n1 & 0x3f) << 2) | ((n2 >> 4) & 0x03);
+  const c2 = ((n2 & 0x0f) << 4) | ((n3 >> 2) & 0x0f);
+  const c3 = ((n3 & 0x03) << 6) | ((n4     ) & 0x3f);
+  buf.push(c1);
+  if (n3 !== 64) buf.push(c2);
+  if (n4 !== 64) buf.push(c3);
+}
+return new Uint8Array(buf);
+};
 
   const tUint8ArrayToString = (buf) => {
     const arr = [];
     for (let i = 0; i < buf.length; i++) {
       const c = buf[i];
       const h = c >> 4; // hhhh llll
-      if (h < 0x08) {        // 0xxx
-        arr.push(String.fromCharCode(c));
-      } else if (h < 0x0c) { // 10xx
-      } else if (h < 0x0e) { // 110x
-        const c2 = buf[++i];
-        arr.push(String.fromCodePoint(
-            ((c  & 0x1f) << 6)
-          | ((c2 & 0x3f)     )
-        ));
-      } else if (h < 0x0f) { // 1110
-        const c2 = buf[++i];
-        const c3 = buf[++i];
-        arr.push(String.fromCodePoint(
-            ((c  & 0x0f) << 12)
-          | ((c2 & 0x3f) << 6)
-          | ((c3 & 0x3f)     )
-        ));
-      } else {  // 1111
-        console.error(`wrong char code at ${i}: ${n}`);
+      switch (h) {
+        case 0x0:
+        case 0x1:
+        case 0x2:
+        case 0x3:
+        case 0x4:
+        case 0x5:
+        case 0x6:
+        case 0x7: // 0xxx
+          // 0xxxxxxx
+          // ---->
+          // 0xxxxxxx
+          arr.push(String.fromCharCode(c));
+          break;
+        case 0x8: // 1000
+        case 0x9: // 1001
+        case 0xa: // 1010
+        case 0xb: // 1011
+          console.error(`ignore char code at ${i}: ${c}`);
+          break;
+        case 0xc: // 1100
+        case 0xd: // 1101
+          // 110xxxxx 11yyyyyy
+          // ---->
+          // 00000xxx xxyyyyyy
+          const c2 = buf[++i];
+          arr.push(String.fromCodePoint(
+              ((c  & 0x1f) << 6)
+            | ((c2 & 0x3f)     )
+          ));
+          break;
+        case 0xe: // 1110
+          // 1110xxxx 10yyyyyy 10zzzzzz
+          // ---->
+          // xxxxyyyy yyzzzzzz
+          const c2 = buf[++i];
+          const c3 = buf[++i];
+          arr.push(String.fromCodePoint(
+              ((c  & 0x0f) << 12)
+            | ((c2 & 0x3f) << 6)
+            | ((c3 & 0x3f)     )
+          ));
+          break;
+        case 0xf:
+          console.error(`ignore char code at ${i}: ${c}`);
       }
     }
     return arr.join('');
   };
 
+  const tUint8ArrayToUtf8String = (buf) => {
+    const decoder = new TextDecoder('utf-8');
+    return decoder.decode(buf);
+  };
+
   utils.tBase64StringToUint8Array = tBase64StringToUint8Array;
   utils.tUint8ArrayToString = tUint8ArrayToString;
-  utils.tBase64StringToUtf8String = s => tUint8ArrayToString(tUint8ArrayToString(s));
+  utils.tUint8ArrayToUtf8String = tUint8ArrayToUtf8String;
 })();
