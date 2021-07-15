@@ -2,7 +2,7 @@
 // @id          zunsthy-common-utils
 // @name        Common Utils
 // @category    utils
-// @version     0.0.4
+// @version     0.0.5
 // @updateURL   https://raw.githubusercontent.com/zunsthy/userscripts/master/CommonUtils.meta.js
 // @downloadURL https://raw.githubusercontent.com/zunsthy/userscripts/master/CommonUtils.user.js
 // @author      ZunSThy <zunsthy@gmail.com>
@@ -179,31 +179,31 @@
   utils.formatTime = formatTime;
   utils.formatDateTime = (date = new Date()) => formatDate(date) + ' ' + foramtTime(date);
 
-const tBase64StringToUint8Array = (b64str) => {
-const b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-const arr = [];
-const buf = [];
-for (let i = 0; i < b64str.length; i++) {
-  const c = b64str.charAt(i);
-  const idx = b.indexOf(c);
-  if (idx === -1) continue;
-  arr.push(idx);
-}
-for (let i = 0; i < arr.length; i+=4) {
-  const n1 = arr[i];
-  const n2 = arr[i+1];
-  const n3 = arr[i+2] || 0;
-  const n4 = arr[i+3] || 0;
-  // aaaaaabb bbbbcccc ccdddddd
-  const c1 = ((n1 & 0x3f) << 2) | ((n2 >> 4) & 0x03);
-  const c2 = ((n2 & 0x0f) << 4) | ((n3 >> 2) & 0x0f);
-  const c3 = ((n3 & 0x03) << 6) | ((n4     ) & 0x3f);
-  buf.push(c1);
-  if (n3 !== 64) buf.push(c2);
-  if (n4 !== 64) buf.push(c3);
-}
-return new Uint8Array(buf);
-};
+  const tBase64StringToUint8Array = (b64str) => {
+    const b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+    const arr = [];
+    const buf = [];
+    for (let i = 0; i < b64str.length; i++) {
+      const c = b64str.charAt(i);
+      const idx = b.indexOf(c);
+      if (idx === -1) continue;
+      arr.push(idx);
+    }
+    for (let i = 0; i < arr.length; i+=4) {
+      const n1 = arr[i];
+      const n2 = arr[i+1];
+      const n3 = arr[i+2] || 0;
+      const n4 = arr[i+3] || 0;
+      // aaaaaabb bbbbcccc ccdddddd
+      const c1 = ((n1 & 0x3f) << 2) | ((n2 >> 4) & 0x03);
+      const c2 = ((n2 & 0x0f) << 4) | ((n3 >> 2) & 0x0f);
+      const c3 = ((n3 & 0x03) << 6) | ((n4     ) & 0x3f);
+      buf.push(c1);
+      if (n3 !== 64) buf.push(c2);
+      if (n4 !== 64) buf.push(c3);
+    }
+    return new Uint8Array(buf);
+  };
 
   const tUint8ArrayToString = (buf) => {
     const arr = [];
@@ -268,4 +268,5 @@ return new Uint8Array(buf);
   utils.tBase64StringToUint8Array = tBase64StringToUint8Array;
   utils.tUint8ArrayToString = tUint8ArrayToString;
   utils.tUint8ArrayToUtf8String = tUint8ArrayToUtf8String;
+  utils.tBase64StringToUtf8String = str => tUint8ArrayToUtf8String(tBase64StringToUint8Array(str));
 })();
