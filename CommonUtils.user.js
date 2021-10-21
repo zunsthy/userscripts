@@ -2,7 +2,7 @@
 // @id          zunsthy-common-utils
 // @name        Common Utils
 // @category    utils
-// @version     0.0.5
+// @version     0.0.6
 // @updateURL   https://raw.githubusercontent.com/zunsthy/userscripts/master/CommonUtils.meta.js
 // @downloadURL https://raw.githubusercontent.com/zunsthy/userscripts/master/CommonUtils.user.js
 // @author      ZunSThy <zunsthy@gmail.com>
@@ -207,9 +207,10 @@
 
   const tUint8ArrayToString = (buf) => {
     const arr = [];
+    let c, h, c2, c3;
     for (let i = 0; i < buf.length; i++) {
-      const c = buf[i];
-      const h = c >> 4; // hhhh llll
+      c = buf[i];
+      h = c >> 4; // hhhh llll
       switch (h) {
         case 0x0:
         case 0x1:
@@ -235,7 +236,7 @@
           // 110xxxxx 11yyyyyy
           // ---->
           // 00000xxx xxyyyyyy
-          const c2 = buf[++i];
+          c2 = buf[++i];
           arr.push(String.fromCodePoint(
               ((c  & 0x1f) << 6)
             | ((c2 & 0x3f)     )
@@ -245,8 +246,8 @@
           // 1110xxxx 10yyyyyy 10zzzzzz
           // ---->
           // xxxxyyyy yyzzzzzz
-          const c2 = buf[++i];
-          const c3 = buf[++i];
+          c2 = buf[++i];
+          c3 = buf[++i];
           arr.push(String.fromCodePoint(
               ((c  & 0x0f) << 12)
             | ((c2 & 0x3f) << 6)
