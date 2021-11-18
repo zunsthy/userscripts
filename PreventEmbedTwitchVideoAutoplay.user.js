@@ -1,12 +1,15 @@
 // ==UserScript==
-// @name         Prevent Video Autoplay (embed.twitch.tv)
-// @namespace    https://github.com/zunsthy
-// @version      1.0.0
-// @description  Prevent Embed Vedio Autoplay
-// @author       zunsthy
-// @match        https://embed.twitch.tv/
-// @icon         https://twitch.tv/favicon.ico
-// @grant        none
+// @name        Prevent Video Autoplay (embed.twitch.tv)
+// @version     1.0.0
+// @updateURL   https://raw.githubusercontent.com/zunsthy/userscripts/master/PreventEmbedTwitchVideoAutoplay.user.js
+// @downloadURL https://raw.githubusercontent.com/zunsthy/userscripts/master/PreventEmbedTwitchVideoAutoplay.user.js
+// @author      ZunSThy <zunsthy@gmail.com>
+// @description Prevent Embed Vedio Autoplay
+// @namespace   https://github.com/zunsthy
+// @include     https://embed.twitch.tv/*
+// @match       https://embed.twitch.tv/*
+// @icon        https://twitch.tv/favicon.ico
+// @grant       none
 // ==/UserScript==
 
 (() => {
