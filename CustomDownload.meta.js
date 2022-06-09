@@ -2,7 +2,7 @@
 // @id          zunsthy-custom-download
 // @name        Custom Download
 // @category    utils
-// @version     0.1.0
+// @version     0.1.1
 // @namespace   https://github.com/zunsthy/
 // @updateURL   https://raw.githubusercontent.com/zunsthy/userscripts/master/CustomDownload.meta.js
 // @downloadURL https://raw.githubusercontent.com/zunsthy/userscripts/master/CustomDownload.user.js
