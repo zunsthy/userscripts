@@ -2,7 +2,7 @@
 // @id          zunsthy-common-utils
 // @name        Common Utils
 // @category    utils
-// @version     0.0.6
+// @version     0.0.7
 // @updateURL   https://raw.githubusercontent.com/zunsthy/userscripts/master/CommonUtils.meta.js
 // @downloadURL https://raw.githubusercontent.com/zunsthy/userscripts/master/CommonUtils.user.js
 // @author      ZunSThy <zunsthy@gmail.com>
@@ -177,7 +177,7 @@
   utils.formatDate = formatDate;
   const formatTime = (date = new Date()) => `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
   utils.formatTime = formatTime;
-  utils.formatDateTime = (date = new Date()) => formatDate(date) + ' ' + foramtTime(date);
+  utils.formatDateTime = (date = new Date()) => formatDate(date) + ' ' + formatTime(date);
 
   const tBase64StringToUint8Array = (b64str) => {
     const b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
